@@ -9,51 +9,48 @@ class Module:
     submodules. They make up the basis of neural network stacks.
 
     Attributes:
-        _modules : Storage of the child modules
-        _parameters : Storage of the module's parameters
-        training : Whether the module is in training mode or evaluation mode
-
+        _modules : dict of name (string) to submodules (Module)
+        _parameters : dict of name (string) to parameters (Parameter)
+        training : bool whether the module is in training mode or evaluation mode
     """
 
-    _modules: Dict[str, Module]
-    _parameters: Dict[str, Parameter]
-    training: bool
-
-    def __init__(self) -> None:
+    def __init__(self):
         self._modules = {}
         self._parameters = {}
         self.training = True
 
-    def modules(self) -> Sequence[Module]:
+    def modules(self):
         "Return the direct child modules of this module."
-        m: Dict[str, Module] = self.__dict__["_modules"]
-        return list(m.values())
+        return self.__dict__["_modules"].values()
 
-    def train(self) -> None:
-        "Set the mode of this module and all descendent modules to `train`."
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+    def train(self):
+        """Set the mode of this module and all descendent modules to `train`."""
+        self.training = True
+        for module in self.modules():
+            module.train()
 
-    def eval(self) -> None:
-        "Set the mode of this module and all descendent modules to `eval`."
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+    def eval(self):
+        """Set the mode of this module and all descendent modules to `eval`."""
+        self.training = False
+        for module in self.modules():
+            module.eval()
 
-    def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
+    def named_parameters(self):
         """
         Collect all the parameters of this module and its descendents.
-
-
+        
         Returns:
-            The name and `Parameter` of each ancestor parameter.
+            list of pairs: Contains the name and `Parameter` of each ancestor parameter.
         """
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+        results = list(self._parameters.items())
+        for module_name, module in self._modules.items():
+            for name, param in module.named_parameters():
+                results.append((f"{module_name}.{name}", param))
+        return results
 
-    def parameters(self) -> Sequence[Parameter]:
-        "Enumerate over all the parameters of this module and its descendents."
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+    def parameters(self):
+        """Enumerate over all the parameters of this module and its descendents."""
+        return [param for _, param in self.named_parameters()]
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
         """

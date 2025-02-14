@@ -93,3 +93,11 @@ datasets = {
     "Circle": circle,
     "Spiral": spiral,
 }
+
+def make_simple(n_points=100):
+    """
+    Create a simple dataset with n_points.
+    """
+    # Create a simple dataset with n_points
+    # Returns x, y where x is 2D points and y is labels (-1 or 1)
+    pass
